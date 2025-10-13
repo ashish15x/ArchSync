@@ -58,3 +58,44 @@ CREATE POLICY "Enable update access for all users" ON understandings
 
 CREATE POLICY "Enable delete access for all users" ON understandings
   FOR DELETE USING (true);
+
+-- Function for semantic search using pgvector
+CREATE OR REPLACE FUNCTION search_understandings(
+  query_embedding vector(768),
+  query_project_id UUID,
+  match_threshold FLOAT DEFAULT 0.3,
+  match_count INT DEFAULT 10
+)
+RETURNS TABLE (
+  id UUID,
+  project_id UUID,
+  developer_name TEXT,
+  change_description TEXT,
+  module_name TEXT,
+  understanding_text TEXT,
+  confidence_score INTEGER,
+  created_at TIMESTAMP WITH TIME ZONE,
+  similarity FLOAT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    understandings.id,
+    understandings.project_id,
+    understandings.developer_name,
+    understandings.change_description,
+    understandings.module_name,
+    understandings.understanding_text,
+    understandings.confidence_score,
+    understandings.created_at,
+    1 - (understandings.embedding <=> query_embedding) AS similarity
+  FROM understandings
+  WHERE understandings.project_id = query_project_id
+    AND understandings.embedding IS NOT NULL
+    AND 1 - (understandings.embedding <=> query_embedding) >= match_threshold
+  ORDER BY understandings.embedding <=> query_embedding
+  LIMIT match_count;
+END;
+$$;

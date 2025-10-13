@@ -231,6 +231,9 @@ export default function AddUnderstandingModal({
           <div>
             <label htmlFor="confidence_score" className="block text-sm font-medium mb-2">
               Confidence Level
+              <span className="ml-2 text-xs text-gray-500 font-normal" title="Rate how confident you are in this understanding">
+                (How sure are you?)
+              </span>
             </label>
             <div className="space-y-3">
               <input
@@ -244,11 +247,12 @@ export default function AddUnderstandingModal({
                 }
                 className="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-600"
                 disabled={loading}
+                title={`Confidence: ${formData.confidence_score}/5`}
               />
               <div className="flex justify-between text-xs text-gray-500">
-                <span>Low (1)</span>
-                <span>Medium (3)</span>
-                <span>High (5)</span>
+                <span title="Exploratory idea, not tested">Low (1)</span>
+                <span title="Working solution, some uncertainty">Medium (3)</span>
+                <span title="Proven approach, highly confident">High (5)</span>
               </div>
               <div className="text-center">
                 <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-800 rounded-full text-sm">

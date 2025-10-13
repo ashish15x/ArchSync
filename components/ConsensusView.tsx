@@ -173,11 +173,17 @@ export default function ConsensusView({ projectId, modules }: ConsensusViewProps
           {/* Consensus Score */}
           <div className="border border-gray-800 rounded-lg p-8 text-center bg-gradient-to-br from-gray-900 to-gray-950">
             <div className="mb-4">
-              <div className={clsx('text-6xl font-bold mb-2', getConsensusColor(result.consensus_percentage))}>
+              <div 
+                className={clsx('text-6xl font-bold mb-2 cursor-help', getConsensusColor(result.consensus_percentage))}
+                title={`${result.consensus_percentage}% of the team has similar understandings (largest cluster)`}
+              >
                 {result.consensus_percentage}%
               </div>
               <div className="text-xl text-gray-400 mb-1">Team Consensus</div>
-              <div className={clsx('text-sm font-medium', getConsensusColor(result.consensus_percentage))}>
+              <div 
+                className={clsx('text-sm font-medium cursor-help', getConsensusColor(result.consensus_percentage))}
+                title="Percentage of team members in the largest agreement cluster"
+              >
                 {getConsensusLabel(result.consensus_percentage)}
               </div>
             </div>

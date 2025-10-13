@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Plus, FolderKanban } from 'lucide-react';
 import { Project } from '@/lib/db-types';
+import { ProjectCardSkeleton } from '@/components/LoadingSkeletons';
 import toast from 'react-hot-toast';
 
 export default function Home() {
@@ -56,7 +57,11 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12 text-gray-400">Loading projects...</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <ProjectCardSkeleton key={i} />
+            ))}
+          </div>
         ) : projects.length === 0 ? (
           <div className="text-center py-16">
             <FolderKanban className="w-16 h-16 mx-auto mb-4 text-gray-600" />

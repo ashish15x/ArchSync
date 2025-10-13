@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import Link from "next/link";
-import { FolderKanban, Search } from "lucide-react";
+import AppLayout from "@/components/AppLayout";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,41 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-950 text-gray-100`}
       >
-        <div className="flex h-screen">
-          {/* Sidebar */}
-          <aside className="w-64 bg-gray-900 border-r border-gray-800 flex flex-col">
-            <div className="p-6 border-b border-gray-800">
-              <h1 className="text-2xl font-bold text-white">ArchSync</h1>
-            </div>
-            <nav className="flex-1 p-4">
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/"
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-                  >
-                    <FolderKanban className="w-5 h-5" />
-                    <span>Projects</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/search"
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-                  >
-                    <Search className="w-5 h-5" />
-                    <span>Search</span>
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-          </aside>
-
-          {/* Main Content */}
-          <main className="flex-1 overflow-auto">
-            {children}
-          </main>
-        </div>
+        <AppLayout>{children}</AppLayout>
         <Toaster
           position="top-right"
           toastOptions={{

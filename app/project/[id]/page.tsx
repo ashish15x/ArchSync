@@ -8,6 +8,7 @@ import { Project, Understanding } from '@/lib/db-types';
 import UnderstandingCard from '@/components/UnderstandingCard';
 import AddUnderstandingModal from '@/components/AddUnderstandingModal';
 import ConsensusView from '@/components/ConsensusView';
+import SemanticSearch from '@/components/SemanticSearch';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
@@ -265,13 +266,14 @@ export default function ProjectDetailPage() {
         )}
 
         {activeTab === 'search' && (
-          <div className="text-center py-16 border border-gray-800 rounded-lg">
-            <SearchIcon className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-            <h3 className="text-xl font-semibold mb-2">Semantic Search</h3>
-            <p className="text-gray-400">
-              Coming soon: Search through understandings using AI-powered semantic search
-            </p>
-          </div>
+          <SemanticSearch 
+            projectId={params.id as string}
+            onViewInContext={(understandingId) => {
+              setActiveTab('understandings');
+              // Scroll to understanding would be implemented here
+              toast.success('Switched to Understandings tab');
+            }}
+          />
         )}
       </div>
 
