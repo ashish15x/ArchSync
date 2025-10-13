@@ -99,3 +99,67 @@ BEGIN
   LIMIT match_count;
 END;
 $$;
+
+-- Conflict analyses table
+CREATE TABLE conflict_analyses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  module_name TEXT NOT NULL,
+  analysis JSONB NOT NULL,
+  consensus_percentage INTEGER,
+  severity TEXT CHECK (severity IN ('High', 'Medium', 'Low')),
+  resolved BOOLEAN DEFAULT FALSE,
+  resolved_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for conflict analyses
+CREATE INDEX idx_conflict_project ON conflict_analyses(project_id);
+CREATE INDEX idx_conflict_module ON conflict_analyses(module_name);
+CREATE INDEX idx_conflict_resolved ON conflict_analyses(resolved);
+
+-- RLS policies for conflict analyses
+ALTER TABLE conflict_analyses ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable read access for all users" ON conflict_analyses
+  FOR SELECT USING (true);
+
+CREATE POLICY "Enable insert access for all users" ON conflict_analyses
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Enable update access for all users" ON conflict_analyses
+  FOR UPDATE USING (true);
+
+CREATE POLICY "Enable delete access for all users" ON conflict_analyses
+  FOR DELETE USING (true);
+
+-- Development Intelligence Reports table
+CREATE TABLE dev_reports (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  report_number INTEGER NOT NULL,
+  content TEXT NOT NULL,
+  summary TEXT,
+  metadata JSONB,
+  generated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Indexes for dev_reports
+CREATE INDEX idx_report_project ON dev_reports(project_id);
+CREATE INDEX idx_report_date ON dev_reports(generated_at DESC);
+CREATE UNIQUE INDEX idx_report_number ON dev_reports(project_id, report_number);
+
+-- RLS policies for dev_reports
+ALTER TABLE dev_reports ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable read access for all users" ON dev_reports
+  FOR SELECT USING (true);
+
+CREATE POLICY "Enable insert access for all users" ON dev_reports
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Enable update access for all users" ON dev_reports
+  FOR UPDATE USING (true);
+
+CREATE POLICY "Enable delete access for all users" ON dev_reports
+  FOR DELETE USING (true);

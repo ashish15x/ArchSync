@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, Users, TrendingUp, AlertCircle, User } from 'lucide-react';
+import { Loader2, Users, TrendingUp, AlertCircle, User, Sparkles } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import ConflictAnalysisModal from './ConflictAnalysisModal';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
@@ -37,6 +38,9 @@ export default function ConsensusView({ projectId, modules }: ConsensusViewProps
   const [selectedModule, setSelectedModule] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ConsensusResult | null>(null);
+  const [analyzingConflict, setAnalyzingConflict] = useState(false);
+  const [conflictAnalysis, setConflictAnalysis] = useState<any>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const handleAnalyze = async () => {
     if (!selectedModule) {
@@ -72,6 +76,45 @@ export default function ConsensusView({ projectId, modules }: ConsensusViewProps
       toast.error(error instanceof Error ? error.message : 'Failed to analyze consensus');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAnalyzeConflict = async () => {
+    if (!result || !result.clusters || result.clusters.length < 2) {
+      toast.error('Need at least 2 clusters to analyze conflict');
+      return;
+    }
+
+    setAnalyzingConflict(true);
+    setConflictAnalysis(null);
+
+    try {
+      const response = await fetch('/api/conflicts/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          project_id: projectId,
+          module_name: result.module_name,
+          clusters: result.clusters,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.details || error.error || 'Failed to analyze conflict');
+      }
+
+      const data = await response.json();
+      setConflictAnalysis(data.analysis);
+      setShowModal(true);
+      toast.success('AI conflict analysis complete!');
+    } catch (error) {
+      console.error('Conflict analysis error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to analyze conflict');
+    } finally {
+      setAnalyzingConflict(false);
     }
   };
 
@@ -294,18 +337,46 @@ export default function ConsensusView({ projectId, modules }: ConsensusViewProps
             <div className="border border-yellow-500/30 bg-yellow-500/10 rounded-lg p-6">
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
-                <div>
+                <div className="flex-1">
                   <h4 className="font-semibold text-yellow-400 mb-2">Low Team Alignment Detected</h4>
-                  <p className="text-sm text-gray-300">
+                  <p className="text-sm text-gray-300 mb-4">
                     Consider scheduling a team discussion to align on the architectural approach for this module.
                     Multiple perspectives can lead to inconsistent implementations.
                   </p>
+                  {result.consensus_percentage < 60 && !conflictAnalysis && (
+                    <button
+                      onClick={handleAnalyzeConflict}
+                      disabled={analyzingConflict}
+                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-700 disabled:to-gray-700 disabled:cursor-not-allowed rounded-lg transition-all font-medium shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                    >
+                      {analyzingConflict ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          <span>AI is analyzing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-5 h-5" />
+                          <span>🔍 Analyze Conflict with AI</span>
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
           )}
+
         </div>
       )}
+
+      {/* Conflict Analysis Modal */}
+      <ConflictAnalysisModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        analysis={conflictAnalysis}
+        moduleName={result?.module_name}
+      />
     </div>
   );
 }
