@@ -12,6 +12,7 @@ import SemanticSearch from '@/components/SemanticSearch';
 import DevReportViewer from '@/components/DevReportViewer';
 import ChatButton from '@/components/ChatButton';
 import ChatPanel from '@/components/ChatPanel';
+import EarlyWarningSystem from '@/components/EarlyWarningSystem';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
@@ -285,6 +286,13 @@ export default function ProjectDetailPage() {
                 </button>
               </div>
             </div>
+
+            {/* Early Warning System */}
+            {understandings.length >= 5 && (
+              <div className="mb-8 border border-gray-800 rounded-lg p-6 bg-gray-900/50">
+                <EarlyWarningSystem projectId={params.id as string} />
+              </div>
+            )}
 
             <div className="flex items-center justify-between mb-6">
               <div>

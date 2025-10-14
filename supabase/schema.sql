@@ -163,3 +163,38 @@ CREATE POLICY "Enable update access for all users" ON dev_reports
 
 CREATE POLICY "Enable delete access for all users" ON dev_reports
   FOR DELETE USING (true);
+
+-- Predictions table for conflict detection
+CREATE TABLE predictions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  prediction_type TEXT NOT NULL,
+  severity TEXT NOT NULL CHECK (severity IN ('High', 'Medium', 'Low')),
+  confidence INTEGER NOT NULL CHECK (confidence >= 0 AND confidence <= 100),
+  module_name TEXT,
+  developer_name TEXT,
+  description TEXT NOT NULL,
+  predicted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  actualized BOOLEAN DEFAULT NULL,
+  actualized_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Indexes for predictions
+CREATE INDEX idx_predictions_project ON predictions(project_id);
+CREATE INDEX idx_predictions_severity ON predictions(severity);
+CREATE INDEX idx_predictions_date ON predictions(predicted_at DESC);
+
+-- RLS policies for predictions
+ALTER TABLE predictions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable read access for all users" ON predictions
+  FOR SELECT USING (true);
+
+CREATE POLICY "Enable insert access for all users" ON predictions
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Enable update access for all users" ON predictions
+  FOR UPDATE USING (true);
+
+CREATE POLICY "Enable delete access for all users" ON predictions
+  FOR DELETE USING (true);
