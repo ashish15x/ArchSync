@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Loader2, Sparkles, User, Tag, Clock, Star, ExternalLink } from 'lucide-react';
+import { Search, Loader2, Sparkles, User, Tag, Clock, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
@@ -264,8 +264,8 @@ export default function SemanticSearch({ projectId, onViewInContext }: SemanticS
             <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-800">
               <p className="text-sm text-gray-400 mb-2">💡 Try asking:</p>
               <ul className="space-y-1 text-sm text-gray-300">
-                <li>"How does authentication work?"</li>
-                <li>"Payment processing flow"</li>
+                <li>&ldquo;How does authentication work?&rdquo;</li>
+                <li>&ldquo;Payment processing flow&rdquo;</li>
               </ul>
             </div>
             <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-800">

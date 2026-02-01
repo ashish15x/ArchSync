@@ -1,4 +1,4 @@
-import { User, Tag, Clock, Star } from 'lucide-react';
+import { User, Tag, Clock } from 'lucide-react';
 import { Understanding } from '@/lib/db-types';
 
 interface UnderstandingCardProps {

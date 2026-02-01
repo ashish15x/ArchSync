@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
           const embeddingStr = (u.embedding as string).trim();
           const jsonStr = embeddingStr.startsWith('[') ? embeddingStr : `[${embeddingStr}]`;
           u.embedding = JSON.parse(jsonStr) as number[];
-        } catch (e) {
+        } catch {
           u.embedding = null;
         }
       }
@@ -82,7 +82,14 @@ export async function GET(request: NextRequest) {
     );
 
     // Analyze developer alignment trends
-    const developerAnalysis: any[] = [];
+    const developerAnalysis: {
+      developer: string;
+      module: string;
+      recent_count: number;
+      total_count: number;
+      similarity_trend: number;
+      recent_understanding: string;
+    }[] = [];
     
     developerModuleMap.forEach((moduleMap, developer) => {
       moduleMap.forEach((understandingsList, module) => {
@@ -202,7 +209,7 @@ Rules:
     let predictions;
     try {
       predictions = JSON.parse(aiResponse);
-    } catch (parseError) {
+    } catch {
       console.error('Failed to parse AI response:', aiResponse);
       return NextResponse.json({
         predictions: [],
@@ -216,7 +223,7 @@ Rules:
     // Save high-severity predictions to database
     if (predictions.predictions && predictions.predictions.length > 0) {
       const highSeverityPredictions = predictions.predictions.filter(
-        (p: any) => p.severity === 'High'
+        (p: { severity: string }) => p.severity === 'High'
       );
 
       for (const pred of highSeverityPredictions) {

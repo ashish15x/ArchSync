@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Build context from search results
-    const relevantContext = similarUnderstandings?.map((u: any) => ({
+    const relevantContext = similarUnderstandings?.map((u: { module_name: string; developer_name: string; understanding_text: string; confidence_score: number; similarity: number }) => ({
       module: u.module_name,
       developer: u.developer_name,
       understanding: u.understanding_text,
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     // 6. Build conversation context
     const conversationContext = conversation_history
       .slice(-4)
-      .map((msg: any) => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
+      .map((msg: { role: string; content: string }) => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
       .join('\n');
 
     // 7. Build comprehensive prompt
@@ -89,7 +89,7 @@ LLD Summary: ${lldSummary}
 
 === Relevant Team Understandings ===
 ${relevantContext.length > 0 
-  ? relevantContext.map((ctx: any, idx: number) => `
+  ? relevantContext.map((ctx: { module: string; developer: string; understanding: string; confidence: number; similarity: number }, idx: number) => `
 ${idx + 1}. Module: ${ctx.module}
    Developer: ${ctx.developer} (confidence: ${ctx.confidence}/5)
    Understanding: ${ctx.understanding}
@@ -122,7 +122,7 @@ Provide your response:`;
     console.log('AI response generated');
 
     // 9. Prepare sources for citation
-    const sources = relevantContext.slice(0, 3).map((ctx: any) => ({
+    const sources = relevantContext.slice(0, 3).map((ctx: { module: string; developer: string; confidence: number }) => ({
       module: ctx.module,
       developer: ctx.developer,
       confidence: ctx.confidence || 3,

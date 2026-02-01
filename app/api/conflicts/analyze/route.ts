@@ -150,7 +150,7 @@ Be technical, specific, and actionable. Return ONLY the JSON, no other text.`;
       .insert({
         project_id,
         module_name,
-        analysis: analysis as any,
+        analysis: analysis as ConflictAnalysis,
         consensus_percentage: Math.round(clusters[0].percentage),
         severity: analysis.risks.severity,
         resolved: false,

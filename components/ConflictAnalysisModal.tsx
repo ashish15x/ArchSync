@@ -7,7 +7,18 @@ import ConflictAnalysis from './ConflictAnalysis';
 interface ConflictAnalysisModalProps {
   isOpen: boolean;
   onClose: () => void;
-  analysis: any;
+  analysis: {
+    root_cause: string;
+    recommendation: string;
+    recommended_approach: string;
+    reasoning: string;
+    risks: {
+      if_unresolved: string;
+      severity: 'High' | 'Medium' | 'Low';
+    };
+    action_items: string[];
+    technical_considerations: string[];
+  };
   analysisId?: string;
   moduleName?: string;
 }

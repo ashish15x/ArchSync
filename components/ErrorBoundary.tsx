@@ -36,7 +36,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             </div>
             <h1 className="text-3xl font-bold mb-4 text-white">Oops! Something went wrong</h1>
             <p className="text-gray-400 mb-6">
-              We encountered an unexpected error. Don't worry, your data is safe.
+              We encountered an unexpected error. Don&apos;t worry, your data is safe.
             </p>
             {this.state.error && (
               <div className="mb-6 p-4 bg-gray-900 border border-gray-800 rounded-lg text-left">

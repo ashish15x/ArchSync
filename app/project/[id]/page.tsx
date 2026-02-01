@@ -15,7 +15,6 @@ import ChatPanel from '@/components/ChatPanel';
 import EarlyWarningSystem from '@/components/EarlyWarningSystem';
 import DocumentEditor from '@/components/DocumentEditor';
 import toast from 'react-hot-toast';
-import clsx from 'clsx';
 
 type Tab = 'understandings' | 'consensus' | 'search' | 'reports';
 
@@ -209,36 +208,33 @@ export default function ProjectDetailPage() {
           <div className="flex gap-6">
             <button
               onClick={() => setActiveTab('understandings')}
-              className={clsx(
-                'flex items-center gap-2 px-4 py-3 border-b-2 transition-colors',
+              className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
                 activeTab === 'understandings'
                   ? 'border-blue-500 text-blue-400'
                   : 'border-transparent text-gray-400 hover:text-gray-300'
-              )}
+              }`}
             >
               <Brain className="w-5 h-5" />
               Understandings
             </button>
             <button
               onClick={() => setActiveTab('consensus')}
-              className={clsx(
-                'flex items-center gap-2 px-4 py-3 border-b-2 transition-colors',
+              className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
                 activeTab === 'consensus'
                   ? 'border-blue-500 text-blue-400'
                   : 'border-transparent text-gray-400 hover:text-gray-300'
-              )}
+              }`}
             >
               <CheckCircle2 className="w-5 h-5" />
               Consensus
             </button>
             <button
               onClick={() => setActiveTab('search')}
-              className={clsx(
-                'flex items-center gap-2 px-4 py-3 border-b-2 transition-colors',
+              className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
                 activeTab === 'search'
                   ? 'border-blue-500 text-blue-400'
                   : 'border-transparent text-gray-400 hover:text-gray-300'
-              )}
+              }`}
             >
               <SearchIcon className="w-5 h-5" />
               Search
@@ -248,12 +244,11 @@ export default function ProjectDetailPage() {
                 setActiveTab('reports');
                 fetchReports();
               }}
-              className={clsx(
-                'flex items-center gap-2 px-4 py-3 border-b-2 transition-colors',
+              className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-colors ${
                 activeTab === 'reports'
                   ? 'border-blue-500 text-blue-400'
                   : 'border-transparent text-gray-400 hover:text-gray-300'
-              )}
+              }`}
             >
               <BarChart3 className="w-5 h-5" />
               Reports
@@ -291,7 +286,7 @@ export default function ProjectDetailPage() {
                   ) : (
                     <>
                       <BarChart3 className="w-5 h-5" />
-                      <span>📊 Generate Dev Summary</span>
+                      <span>Generate Dev Summary</span>
                     </>
                   )}
                 </button>
@@ -389,7 +384,7 @@ export default function ProjectDetailPage() {
         {activeTab === 'search' && (
           <SemanticSearch 
             projectId={params.id as string}
-            onViewInContext={(understandingId) => {
+            onViewInContext={() => {
               setActiveTab('understandings');
               // Scroll to understanding would be implemented here
               toast.success('Switched to Understandings tab');
@@ -427,7 +422,7 @@ export default function ProjectDetailPage() {
               </div>
             ) : (
               <div className="grid gap-6">
-                {reports.map((report: any) => (
+                {reports.map((report) => (
                   <div
                     key={report.id}
                     className="border border-gray-800 rounded-lg p-6 bg-gray-900/50 hover:bg-gray-900 transition-colors"

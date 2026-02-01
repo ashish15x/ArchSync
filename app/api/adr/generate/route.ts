@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
           const embeddingStr = (u.embedding as string).trim();
           const jsonStr = embeddingStr.startsWith('[') ? embeddingStr : `[${embeddingStr}]`;
           u.embedding = JSON.parse(jsonStr) as number[];
-        } catch (e) {
+        } catch {
           u.embedding = null;
         }
       }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     const consensusPercentage = calculateConsensus(clusters);
 
     // Get next ADR number
-    const { data: existingADRs, error: adrCountError } = await supabase
+    const { data: existingADRs } = await supabase
       .from('adrs')
       .select('adr_number')
       .eq('project_id', project_id)

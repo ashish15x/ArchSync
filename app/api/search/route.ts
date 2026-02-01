@@ -13,6 +13,7 @@ interface SearchResult {
   created_at: string;
   similarity: number;
   source?: 'semantic' | 'text' | 'hld' | 'lld';
+  embedding?: string | number[] | null;
 }
 
 // POST: Combined search (semantic + text + HLD/LLD)
@@ -89,7 +90,7 @@ export async function POST(request: NextRequest) {
         .or(`understanding_text.ilike.%${searchTerm}%,module_name.ilike.%${searchTerm}%,developer_name.ilike.%${searchTerm}%,change_description.ilike.%${searchTerm}%`);
 
       if (!textError && textResults) {
-        textResults.forEach((result: any) => {
+        textResults.forEach((result: SearchResult) => {
           if (!seenIds.has(result.id)) {
             seenIds.add(result.id);
             allResults.push({
@@ -116,7 +117,7 @@ export async function POST(request: NextRequest) {
         .not('embedding', 'is', null);
 
       if (!semanticError && semanticResults) {
-        semanticResults.forEach((result: any) => {
+        semanticResults.forEach((result: SearchResult) => {
           if (!seenIds.has(result.id)) {
             // Parse embedding
             let embedding = result.embedding;
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
                 const embeddingStr = embedding.trim();
                 const jsonStr = embeddingStr.startsWith('[') ? embeddingStr : `[${embeddingStr}]`;
                 embedding = JSON.parse(jsonStr);
-              } catch (e) {
+              } catch {
                 return;
               }
             }

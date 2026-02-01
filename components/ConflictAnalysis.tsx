@@ -62,10 +62,10 @@ ${analysis.risks.if_unresolved}
 Severity: ${analysis.risks.severity}
 
 ## Action Items
-${analysis.action_items.map((item, i) => `${i + 1}. ${item}`).join('\n')}
+${analysis.action_items.map((item) => `- ${item}`).join('\n')}
 
 ## Technical Considerations
-${analysis.technical_considerations.map((item, i) => `- ${item}`).join('\n')}
+${analysis.technical_considerations.map((item) => `- ${item}`).join('\n')}
     `.trim();
 
     navigator.clipboard.writeText(text);

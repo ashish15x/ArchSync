@@ -46,7 +46,7 @@ export async function PATCH(
     const body = await request.json();
     const { hld_text, lld_text } = body;
 
-    const updateData: any = {};
+    const updateData: { hld_text?: string; lld_text?: string } = {};
     if (hld_text !== undefined) updateData.hld_text = hld_text;
     if (lld_text !== undefined) updateData.lld_text = lld_text;
 

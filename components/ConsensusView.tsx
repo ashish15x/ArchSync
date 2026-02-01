@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Loader2, Users, TrendingUp, AlertCircle, User, Sparkles } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import ConflictAnalysisModal from './ConflictAnalysisModal';
@@ -39,7 +39,18 @@ export default function ConsensusView({ projectId, modules }: ConsensusViewProps
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ConsensusResult | null>(null);
   const [analyzingConflict, setAnalyzingConflict] = useState(false);
-  const [conflictAnalysis, setConflictAnalysis] = useState<any>(null);
+  const [conflictAnalysis, setConflictAnalysis] = useState<{
+    root_cause: string;
+    recommendation: string;
+    recommended_approach: string;
+    reasoning: string;
+    risks: {
+      if_unresolved: string;
+      severity: 'High' | 'Medium' | 'Low';
+    };
+    action_items: string[];
+    technical_considerations: string[];
+  } | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   const handleAnalyze = async () => {
@@ -252,8 +263,8 @@ export default function ConsensusView({ projectId, modules }: ConsensusViewProps
                       borderRadius: '0.5rem',
                       color: '#f3f4f6',
                     }}
-                    formatter={(value: number, name: string, props: any) => [
-                      `${value} developers (${props.payload.percentage.toFixed(1)}%)`,
+                    formatter={(value: number) => [
+                      `${value} developers`,
                       'Size'
                     ]}
                   />
@@ -374,7 +385,18 @@ export default function ConsensusView({ projectId, modules }: ConsensusViewProps
       <ConflictAnalysisModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        analysis={conflictAnalysis}
+        analysis={conflictAnalysis || {
+          root_cause: '',
+          recommendation: '',
+          recommended_approach: '',
+          reasoning: '',
+          risks: {
+            if_unresolved: '',
+            severity: 'Low' as const
+          },
+          action_items: [],
+          technical_considerations: []
+        }}
         moduleName={result?.module_name}
       />
     </div>

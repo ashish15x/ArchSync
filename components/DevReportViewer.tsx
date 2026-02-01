@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { X, Copy, Download, Share2, RefreshCw, CheckCircle2, TrendingUp, Users, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
-import clsx from 'clsx';
 
 interface DevReportViewerProps {
   isOpen: boolean;
@@ -31,7 +30,6 @@ export default function DevReportViewer({
   onRegenerate,
 }: DevReportViewerProps) {
   const [copied, setCopied] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
 
   useEffect(() => {
     if (isOpen) {

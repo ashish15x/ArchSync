@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
           const embeddingStr = (u.embedding as string).trim();
           const jsonStr = embeddingStr.startsWith('[') ? embeddingStr : `[${embeddingStr}]`;
           u.embedding = JSON.parse(jsonStr) as number[];
-        } catch (e) {
+        } catch {
           u.embedding = null;
         }
       }
@@ -83,7 +83,13 @@ export async function POST(request: NextRequest) {
     });
 
     // Calculate consensus for each module
-    const moduleAnalysis: any[] = [];
+    const moduleAnalysis: {
+      module: string;
+      consensus: number;
+      clusters: any[];
+      understandingCount: number;
+      contributors: string[];
+    }[] = [];
     moduleMap.forEach((understandings, moduleName) => {
       const validUnderstandings = understandings.filter(u => u.embedding);
       if (validUnderstandings.length >= 2) {
@@ -288,7 +294,7 @@ Be specific, actionable, and highlight both problems and wins. Return ONLY the m
     const summary = summaryMatch ? summaryMatch[1].trim().substring(0, 300) : '';
 
     // Get next report number
-    const { data: existingReports, error: reportCountError } = await supabase
+    const { data: existingReports } = await supabase
       .from('dev_reports')
       .select('report_number')
       .eq('project_id', project_id)
