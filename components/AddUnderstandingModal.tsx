@@ -9,6 +9,7 @@ interface AddUnderstandingModalProps {
   onClose: () => void;
   projectId: string;
   onSuccess: () => void;
+  existingModules?: string[];
 }
 
 const MAX_CHARS = 200;
@@ -18,8 +19,10 @@ export default function AddUnderstandingModal({
   onClose,
   projectId,
   onSuccess,
+  existingModules = [],
 }: AddUnderstandingModalProps) {
   const [loading, setLoading] = useState(false);
+  const [isNewModule, setIsNewModule] = useState(false);
   const [formData, setFormData] = useState({
     developer_name: '',
     change_description: '',
@@ -182,16 +185,55 @@ export default function AddUnderstandingModal({
             <label htmlFor="module_name" className="block text-sm font-medium mb-2">
               Module Name <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              id="module_name"
-              required
-              value={formData.module_name}
-              onChange={(e) => setFormData({ ...formData, module_name: e.target.value })}
-              className="w-full px-4 py-3 bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
-              placeholder="e.g., Authentication"
-              disabled={loading}
-            />
+            
+            {existingModules.length > 0 && !isNewModule ? (
+              <div className="space-y-2">
+                <select
+                  id="module_name"
+                  value={formData.module_name}
+                  onChange={(e) => {
+                    if (e.target.value === '__new__') {
+                      setIsNewModule(true);
+                      setFormData({ ...formData, module_name: '' });
+                    } else {
+                      setFormData({ ...formData, module_name: e.target.value });
+                    }
+                  }}
+                  className="w-full px-4 py-3 bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+                  disabled={loading}
+                >
+                  <option value="">Select existing module...</option>
+                  {existingModules.map((module) => (
+                    <option key={module} value={module}>
+                      {module}
+                    </option>
+                  ))}
+                  <option value="__new__">+ Add new module</option>
+                </select>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  id="module_name"
+                  required
+                  value={formData.module_name}
+                  onChange={(e) => setFormData({ ...formData, module_name: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+                  placeholder="e.g., Authentication"
+                  disabled={loading}
+                />
+                {existingModules.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setIsNewModule(false)}
+                    className="text-sm text-blue-400 hover:text-blue-300"
+                  >
+                    ← Choose from existing modules
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Understanding Text */}

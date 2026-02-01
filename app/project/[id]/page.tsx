@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Loader2, Brain, Search as SearchIcon, CheckCircle2, ChevronDown, ChevronRight, BarChart3, FileText } from 'lucide-react';
+import { ArrowLeft, Plus, Loader2, Brain, Search as SearchIcon, CheckCircle2, ChevronDown, ChevronRight, BarChart3, FileText, BookOpen } from 'lucide-react';
 import { Project, Understanding } from '@/lib/db-types';
 import UnderstandingCard from '@/components/UnderstandingCard';
 import AddUnderstandingModal from '@/components/AddUnderstandingModal';
@@ -13,6 +13,7 @@ import DevReportViewer from '@/components/DevReportViewer';
 import ChatButton from '@/components/ChatButton';
 import ChatPanel from '@/components/ChatPanel';
 import EarlyWarningSystem from '@/components/EarlyWarningSystem';
+import DocumentEditor from '@/components/DocumentEditor';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
@@ -34,6 +35,7 @@ export default function ProjectDetailPage() {
   const [reports, setReports] = useState<any[]>([]);
   const [reportsLoading, setReportsLoading] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [showDocEditor, setShowDocEditor] = useState(false);
 
   useEffect(() => {
     fetchProject();
@@ -182,15 +184,24 @@ export default function ProjectDetailPage() {
           Back to Projects
         </Link>
 
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">{project.name}</h1>
-          <p className="text-gray-400">
-            Created {new Date(project.created_at).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </p>
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">{project.name}</h1>
+            <p className="text-gray-400">
+              Created {new Date(project.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowDocEditor(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg transition-colors text-sm"
+          >
+            <BookOpen className="w-4 h-4" />
+            View/Edit Design Docs
+          </button>
         </div>
 
         {/* Tabs */}
@@ -484,6 +495,7 @@ export default function ProjectDetailPage() {
         onClose={() => setIsModalOpen(false)}
         projectId={params.id as string}
         onSuccess={fetchUnderstandings}
+        existingModules={uniqueModules}
       />
 
       {/* Dev Report Viewer Modal */}
@@ -510,6 +522,19 @@ export default function ProjectDetailPage() {
             projectName={project.name}
           />
         </>
+      )}
+
+      {/* Document Editor */}
+      {project && (
+        <DocumentEditor
+          isOpen={showDocEditor}
+          onClose={() => setShowDocEditor(false)}
+          projectId={params.id as string}
+          projectName={project.name}
+          initialHld={project.hld_text || ''}
+          initialLld={project.lld_text || ''}
+          onSave={fetchProject}
+        />
       )}
     </div>
   );
