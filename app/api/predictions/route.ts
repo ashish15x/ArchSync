@@ -5,6 +5,8 @@ import { Understanding } from '@/lib/db-types';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;

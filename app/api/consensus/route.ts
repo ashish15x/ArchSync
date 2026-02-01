@@ -3,6 +3,8 @@ import { supabase } from '@/lib/supabase';
 import { clusterUnderstandings, calculateConsensus } from '@/lib/clustering';
 import { Understanding } from '@/lib/db-types';
 
+export const dynamic = 'force-dynamic';
+
 // GET: Analyze consensus for a module
 export async function GET(request: NextRequest) {
   try {
